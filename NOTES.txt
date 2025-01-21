@@ -20,7 +20,7 @@
    [X]  #5: Normalizing Vectors
    [X]  #6: Vector Transformations
    [X]  #7: Vectors in C++
-   [-]  #8: Starting our C++ Project
+   [X]  #8: Starting our C++ Project
    [-]  #9: Particle Physics
    [-] #10: Simulating Movement
    [-] #11: Applying Forces
@@ -53,6 +53,12 @@
 
   #2 | NOTES
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
+   - Vector operations (2D):
+     + Addition:      Vec2  (Vec2 v1, Vec2 v2)    { x = v1.x + v2.x;                          y = v1.y + v2.y; }
+     + Subtraction:   Vec2  (Vec2 v1, Vec2 v2)    { x = v1.x - v2.x;                          y = v1.y - v2.y; }
+     + Scale:         Vec2  (Vec2 v, float n)     { x = v.x * n;                              y = v.y * n; }
+     + Rotate:        Vec2  (Vec2 v, float angle) { x = v.x * cos(angle) - v.y * sin(angle);  y = v.x * sin(angle) + v.y * cos(angle); }
+     + Dot product:   float (Vec2 v1, Vec2 v2)    { v1.x * v2.x + v1.y * v2.y }
+     + Cross product: float (Vec2 v1, Vec2 v2)    { v1.x * v2.y + v1.y * v2.x }
+     + Magnitude:     float (Vec2 v)              { sqrt(v.x * v.x + v.y * v.y) }
 
