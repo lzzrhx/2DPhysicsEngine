@@ -1,0 +1,58 @@
+////////////////////////////////////////////////////////////////////////////////
+// This document contains course notes for the course:
+// "2D Game Physics Engine Programming" by Gustavo Pezzi
+// https://pikuma.com/courses/game-physics-engine-programming
+////////////////////////////////////////////////////////////////////////////////
+
+ SECTIONS:
+   #1: COURSE OVERVIEW
+   #2: NOTES
+
+
+
+  #1 | COURSE OVERVIEW:
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+   [X]  #1: Introduction
+   [X]  #2: Vectors
+   [X]  #3: Vector Operations
+   [X]  #4: Dot Product & Cross Product
+   [X]  #5: Normalizing Vectors
+   [X]  #6: Vector Transformations
+   [X]  #7: Vectors in C++
+   [-]  #8: Starting our C++ Project
+   [-]  #9: Particle Physics
+   [-] #10: Simulating Movement
+   [-] #11: Applying Forces
+   [-] #12: Drag & Friction Forces
+   [-] #13: Gravitational Attraction
+   [-] #14: Spring Forces
+   [-] #15: Rigid-Body Physics
+   [-] #16: Shapes & Vertices
+   [-] #17: Colliding Circles
+   [-] #18: Impulse & Momentum
+   [-] #19: Colliding Boxes
+   [-] #20: Angular Collision Resolution
+   [-] #21: Colliding Circles & Polygons
+   [-] #22: Rendering Textures
+   [-] #23: The World Object
+   [-] #24: Collision Instability
+   [-] #25: Constraints
+   [-] #26: Matrices
+   [-] #27: Distance Constraint
+   [-] #28: System of Contraints
+   [-] #29: Penetration Constraint
+   [-] #30: Stack of Boxes
+   [-] #31: Optimization Techniques
+   [-] #32: Bonus Lecture: Verlet Method
+   [-] #33: Conclusion
+  
+   [X] COMPLETED / [-] NOT COMPLETED
+
+
+
+  #2 | NOTES
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+
+
