@@ -21,7 +21,7 @@
    [X]  #6: Vector Transformations
    [X]  #7: Vectors in C++
    [X]  #8: Starting our C++ Project
-   [-]  #9: Particle Physics
+   [X]  #9: Particle Physics
    [-] #10: Simulating Movement
    [-] #11: Applying Forces
    [-] #12: Drag & Friction Forces
