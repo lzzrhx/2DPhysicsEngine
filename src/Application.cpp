@@ -51,9 +51,7 @@ void Application::Update() {
     // Update the objects in the scene
     particle->acceleration = Vec2(0.0 * PIXELS_PER_METER, 9.8 * PIXELS_PER_METER);
 
-    //Integrate the acceleration and the velocity to find the new position
-    particle->velocity += particle->acceleration * deltaTime;
-    particle->position += particle->velocity * deltaTime;
+    particle->Integrate(deltaTime);
 
     if (particle->position.x + particle->radius <= 0) {
         particle->position.x = particle->radius;

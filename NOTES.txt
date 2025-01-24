@@ -22,7 +22,7 @@
    [X]  #7: Vectors in C++
    [X]  #8: Starting our C++ Project
    [X]  #9: Particle Physics
-   [-] #10: Simulating Movement
+   [X] #10: Simulating Movement
    [-] #11: Applying Forces
    [-] #12: Drag & Friction Forces
    [-] #13: Gravitational Attraction
