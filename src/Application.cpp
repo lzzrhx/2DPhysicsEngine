@@ -13,9 +13,17 @@ void Application::Setup() {
     running = Graphics::OpenWindow();
 
     //SDL_GetMouseState(&x, &y);
-    Particle* particle = new Particle(100, 100, 1.0);
-    particle->radius = 20;
-    particles.push_back(particle);
+    // Particle* particle = new Particle(100, 100, 1.0);
+    // particle->radius = 20;
+    // particles.push_back(particle);
+
+    Particle* smallPlanet = new Particle(200, 200, 1.0);
+    smallPlanet->radius = 6;
+    particles.push_back(smallPlanet);
+    
+    Particle* bigPlanet = new Particle(500, 500, 20.0);
+    bigPlanet->radius = 20;
+    particles.push_back(bigPlanet);
 
     liquid.x = 0;
     liquid.y = Graphics::Height() / 2;
@@ -107,7 +115,13 @@ void Application::Update() {
     //     Vec2 wind = Vec2(0.5 * PIXELS_PER_METER, 0.0);
     //     particle->AddForce(wind);
     // }
-    
+    //Particle* particleA = particles[0];
+    //Particle* particleB = particles[1];
+    //Vec2 attraction = Force::GenerateGravitationalForce(*particles[0], *particles[1], 0.00000000006674);
+    Vec2 attraction = Force::GenerateGravitationalForce(*particles[0], *particles[1], 1000.0, 5.0, 100.0);
+    particles[0]->AddForce(attraction);
+    particles[1]->AddForce(-attraction);
+
     // Apply forces to particles
     for(auto particle: particles) {
         //Vec2 weight = Vec2(0.0, particle->mass * 9.8 * PIXELS_PER_METER);
@@ -115,13 +129,13 @@ void Application::Update() {
         
         particle->AddForce(pushForce);
         
-        Vec2 friction = Force::GenerateFrictionForce(*particle, 10.0 * PIXELS_PER_METER);
-        particle->AddForce(friction);
+        // Vec2 friction = Force::GenerateFrictionForce(*particle, 10.0 * PIXELS_PER_METER);
+        // particle->AddForce(friction);
 
-        if (particle->position.y >= liquid.y) {
-            Vec2 drag = Force::GenerateDragForce(*particle, 0.04);
-            particle->AddForce(drag);
-        }
+        // if (particle->position.y >= liquid.y) {
+        //     Vec2 drag = Force::GenerateDragForce(*particle, 0.04);
+        //     particle->AddForce(drag);
+        // }
 
         // Integrate the acceleration and velocity to estimate the position
         particle->Integrate(deltaTime);
@@ -155,9 +169,11 @@ void Application::Render() {
 
     Graphics::DrawFillRect(liquid.x + liquid.w / 2, liquid.y + liquid.h / 2, liquid.w, liquid.h, 0xFF6E3713);
 
-    for (auto particle: particles) {
-        Graphics::DrawFillCircle(particle->position.x, particle->position.y, particle->radius, 0xFFFFFFFF);
-    }
+    // for (auto particle: particles) {
+    //     Graphics::DrawFillCircle(particle->position.x, particle->position.y, particle->radius, 0xFFFFFFFF);
+    // }
+    Graphics::DrawFillCircle(particles[0]->position.x, particles[0]->position.y, particles[0]->radius, 0xFFAA3300);
+    Graphics::DrawFillCircle(particles[1]->position.x, particles[1]->position.y, particles[1]->radius, 0xFF00FFFF);
     Graphics::RenderFrame();
 }
 
