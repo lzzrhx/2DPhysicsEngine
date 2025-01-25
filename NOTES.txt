@@ -24,7 +24,7 @@
    [X]  #9: Particle Physics
    [X] #10: Simulating Movement
    [X] #11: Applying Forces
-   [-] #12: Drag & Friction Forces
+   [X] #12: Drag & Friction Forces
    [-] #13: Gravitational Attraction
    [-] #14: Spring Forces
    [-] #15: Rigid-Body Physics

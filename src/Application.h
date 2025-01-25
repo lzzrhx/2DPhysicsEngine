@@ -11,6 +11,10 @@ class Application {
         int timePreviousFrame;
         std::vector<Particle*> particles;
         Vec2 pushForce = Vec2(0, 0);
+        SDL_Rect liquid;
+
+        bool leftMouseButtonDown = false;
+        Vec2 mouseCursor = Vec2(0, 0);
 
     public:
         Application() = default;
