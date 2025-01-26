@@ -12,8 +12,8 @@ bool Application::IsRunning() {
 void Application::Setup() {
     running = Graphics::OpenWindow();
 
-    Body* body = new Body(CircleShape(50), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
-    bodies.push_back(body);
+    Body* box = new Body(BoxShape(200, 100), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
+    bodies.push_back(box);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,27 +75,25 @@ void Application::Update() {
         // Apply forces to bodies
         Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
         Vec2 drag = Force::GenerateDragForce(*body, 0.01);
-        body->AddForce(weight);
+        //body->AddForce(weight);
         body->AddForce(drag);
         body->AddForce(pushForce);
 
-        float torque = 20;
+        float torque = 2000;
         body->AddTorque(torque);
 
-        // Integrate the linear and angular forces
-        body->Integrate(deltaTime);
-        body->IntegrateAngular(deltaTime);
+        body->Update(deltaTime);
 
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
-            if (body->position.x + circleShape->radius <= 0) {
+            if (body->position.x - circleShape->radius <= 0) {
                 body->position.x = circleShape->radius;
                 body->velocity.x *= -1.0;
             } else if (body->position.x + circleShape->radius >= Graphics::Width()) {
                 body->position.x = Graphics::Width() - circleShape->radius;
                 body->velocity.x *= -1.0f;
             }
-            if (body->position.y + circleShape->radius <= 0) {
+            if (body->position.y - circleShape->radius <= 0) {
                 body->position.y = circleShape->radius;
                 body->velocity.y *= -1.0f;
             } else if (body->position.y + circleShape->radius + 24 >= Graphics::Height()) {
@@ -116,6 +114,10 @@ void Application::Render() {
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
             Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFFFFFFFF);
+        }
+        else if (body->shape->GetType() == BOX) {
+            BoxShape* boxShape = (BoxShape*) body->shape;
+            Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, 0xFFFFFFFF);
         }
     }
     Graphics::RenderFrame();

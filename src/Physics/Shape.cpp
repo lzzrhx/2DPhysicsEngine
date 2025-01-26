@@ -25,7 +25,8 @@ float CircleShape::GetMomentOfInertia() const {
 
 PolygonShape::PolygonShape(const std::vector<Vec2> vertices) {
     std::cout << "PolygonShape constructor called!" << std::endl;
-    this->vertices = vertices;
+    this->localVertices = vertices;
+    this->worldVertices = vertices;
 }
 
 PolygonShape::~PolygonShape() {
@@ -37,17 +38,31 @@ ShapeType PolygonShape::GetType() const {
 }
 
 Shape* PolygonShape::Clone() const {
-    return new PolygonShape(vertices);
+    return new PolygonShape(localVertices);
 }
 
 float PolygonShape::GetMomentOfInertia() const {
     return 0.0;
 }
 
+void PolygonShape::UpdateVertices(float angle, const Vec2& position) {
+    for (size_t i = 0; i < localVertices.size(); i++) {
+        worldVertices[i] = localVertices[i].Rotate(angle) + position;
+    }
+}
+
 BoxShape::BoxShape(float width, float height) {
     std::cout << "BoxShape constructor called!" << std::endl;
     this->width = width;
     this->height = height;
+    localVertices.push_back(Vec2(-width / 2.0, -height / 2.0));
+    localVertices.push_back(Vec2( width / 2.0, -height / 2.0));
+    localVertices.push_back(Vec2( width / 2.0,  height / 2.0));
+    localVertices.push_back(Vec2(-width / 2.0,  height / 2.0));
+    worldVertices.push_back(Vec2(-width / 2.0, -height / 2.0));
+    worldVertices.push_back(Vec2( width / 2.0, -height / 2.0));
+    worldVertices.push_back(Vec2( width / 2.0,  height / 2.0));
+    worldVertices.push_back(Vec2(-width / 2.0,  height / 2.0));
 }
 
 BoxShape::~BoxShape() {

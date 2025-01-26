@@ -37,8 +37,10 @@ struct Body {
     void ClearForces();
     void ClearTorque();
 
-    void Integrate(float dt);
+    void IntegrateLinear(float dt);
     void IntegrateAngular(float dt);
+
+    void Update(float dt);
 };
 
 #endif

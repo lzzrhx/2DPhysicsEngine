@@ -47,7 +47,7 @@ void Body::ClearTorque() {
     sumTorque = 0.0;
 }
 
-void Body::Integrate(float dt) {
+void Body::IntegrateLinear(float dt) {
     acceleration = sumForces * invMass;
     velocity += acceleration * dt;
     position += velocity * dt;
@@ -59,4 +59,14 @@ void Body::IntegrateAngular(float dt) {
     angularVelocity += angularAcceleration * dt;
     rotation += angularVelocity * dt;
     ClearTorque();
+}
+
+void Body::Update(float dt) {
+        IntegrateLinear(dt);
+        IntegrateAngular(dt);
+        bool isPolygon = shape->GetType() == POLYGON || shape->GetType() == BOX;
+        if (isPolygon) {
+            PolygonShape* polygonShape = (PolygonShape*) shape;
+            polygonShape->UpdateVertices(rotation, position);
+        }
 }
