@@ -2,14 +2,14 @@
 #define APPLICATION_H
 
 #include "./Graphics.h"
-#include "./Physics/Particle.h"
+#include "./Physics/Body.h"
 #include <vector>
 
 class Application {
     private:
         bool running = false;
         int timePreviousFrame;
-        std::vector<Particle*> particles;
+        std::vector<Body*> bodies;
         Vec2 pushForce = Vec2(0, 0);
         SDL_Rect liquid;
 
