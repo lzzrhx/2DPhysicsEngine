@@ -25,8 +25,8 @@
    [X] #10: Simulating Movement
    [X] #11: Applying Forces
    [X] #12: Drag & Friction Forces
-   [-] #13: Gravitational Attraction
-   [-] #14: Spring Forces
+   [X] #13: Gravitational Attraction
+   [X] #14: Spring Forces
    [-] #15: Rigid-Body Physics
    [-] #16: Shapes & Vertices
    [-] #17: Colliding Circles
@@ -46,7 +46,7 @@
    [-] #31: Optimization Techniques
    [-] #32: Bonus Lecture: Verlet Method
    [-] #33: Conclusion
-  
+
    [X] COMPLETED / [-] NOT COMPLETED
 
 
