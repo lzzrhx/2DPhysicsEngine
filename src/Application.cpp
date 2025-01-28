@@ -1,6 +1,8 @@
 #include "Application.h"
 #include "./Physics/Constants.h"
 #include "./Physics/Force.h"
+#include "./Physics/CollisionDetection.h"
+#include "./Physics/Contact.h"
 
 bool Application::IsRunning() {
     return running;
@@ -12,8 +14,11 @@ bool Application::IsRunning() {
 void Application::Setup() {
     running = Graphics::OpenWindow();
 
-    Body* box = new Body(BoxShape(200, 100), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
-    bodies.push_back(box);
+    //Body* bigBall = new Body(CircleShape(100), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
+    Body* bigBall = new Body(CircleShape(100), 100, 100, 0.0);
+    Body* smallBall = new Body(CircleShape(50), 500, 100, 1.0);
+    bodies.push_back(bigBall);
+    bodies.push_back(smallBall);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,8 +32,11 @@ void Application::Input() {
                 running = false;
                 break;
             case SDL_MOUSEMOTION:
-                mouseCursor.x = event.motion.x;
-                mouseCursor.y = event.motion.y;
+                //mouseCursor.x = event.motion.x;
+                //mouseCursor.y = event.motion.y;
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                bodies[0]->position = Vec2(x, y);
                 break;
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE)
@@ -60,6 +68,7 @@ void Application::Input() {
 // Update function (called several times per second to update objects)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Update() {
+    Graphics::ClearScreen(0xFF000000);
     // Cap the framerate to target FPS and set delta time
     int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - timePreviousFrame);
     if (timeToWait > 0) {
@@ -71,19 +80,40 @@ void Application::Update() {
     }
     timePreviousFrame = SDL_GetTicks();
 
+    // Apply forces to bodies
     for(auto body: bodies) {
-        // Apply forces to bodies
-        Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
-        Vec2 drag = Force::GenerateDragForce(*body, 0.01);
+        //Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
         //body->AddForce(weight);
-        body->AddForce(drag);
+        //Vec2 drag = Force::GenerateDragForce(*body, 0.01);
+        //body->AddForce(drag);
+        //Vec2 wind = Vec2(20.0 * PIXELS_PER_METER, 0.0);
+        //body->AddForce(wind);
         body->AddForce(pushForce);
-
-        float torque = 2000;
-        body->AddTorque(torque);
-
         body->Update(deltaTime);
+    }
 
+    for (auto& body: bodies) {
+        body->isColliding = false;
+    }
+
+    // Check all the bodies for collision
+    for (size_t i = 0; i < bodies.size() - 1; i++) {
+        for (size_t j = i + 1; j < bodies.size(); j++) {
+            Body* a = bodies[i];
+            Body* b = bodies[j];
+            Contact contact;
+            if (CollisionDetection::IsColliding(a, b, contact)) {
+                Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFFFF00FF);
+                Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFFFF00FF);
+                Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * contact.depth, contact.start.y + contact.normal.y * contact.depth, 0xFFFF00FF);
+                a->isColliding = true;
+                b->isColliding = true;
+            }
+        }
+    }
+
+    // Keep body within bounds
+    for(auto body: bodies) {
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
             if (body->position.x - circleShape->radius <= 0) {
@@ -108,12 +138,13 @@ void Application::Update() {
 // Render function (called several times per second to draw objects)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Render() {
-    Graphics::ClearScreen(0xFF000000);
 
     for (auto body: bodies) {
+        Uint32 color = body->isColliding ? 0xFF0000FF : 0xFFFFFFFF;
+
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
-            Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, 0xFFFFFFFF);
+            Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, color);
         }
         else if (body->shape->GetType() == BOX) {
             BoxShape* boxShape = (BoxShape*) body->shape;

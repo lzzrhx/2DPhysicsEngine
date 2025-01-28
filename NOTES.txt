@@ -29,7 +29,7 @@
    [X] #14: Spring Forces
    [X] #15: Rigid-Body Physics
    [X] #16: Shapes & Vertices
-   [-] #17: Colliding Circles
+   [X] #17: Colliding Circles
    [-] #18: Impulse & Momentum
    [-] #19: Colliding Boxes
    [-] #20: Angular Collision Resolution
