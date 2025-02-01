@@ -30,8 +30,8 @@
    [X] #15: Rigid-Body Physics
    [X] #16: Shapes & Vertices
    [X] #17: Colliding Circles
-   [-] #18: Impulse & Momentum
-   [-] #19: Colliding Boxes
+   [X] #18: Impulse & Momentum
+   [X] #19: Colliding Boxes
    [-] #20: Angular Collision Resolution
    [-] #21: Colliding Circles & Polygons
    [-] #22: Rendering Textures
@@ -61,4 +61,15 @@
      + Dot product:   float (Vec2 v1, Vec2 v2)    { v1.x * v2.x + v1.y * v2.y }
      + Cross product: float (Vec2 v1, Vec2 v2)    { v1.x * v2.y + v1.y * v2.x }
      + Magnitude:     float (Vec2 v)              { sqrt(v.x * v.x + v.y * v.y) }
+   - Collision detection:
+     + Circle
+     + AABB - Axis-aligned bounding box
+     + OBB - Oriented bounding-boxes
+     + SAT - Separating axis theorem
+       + Only works for convex polygons
+       + There is at least one axis separating the two bodies
+       + One of the most popular collision detection algorithms for rigid bodies (along with the GJK algorithm)
+
+
+
 

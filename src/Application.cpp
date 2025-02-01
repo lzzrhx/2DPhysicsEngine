@@ -15,10 +15,11 @@ void Application::Setup() {
     running = Graphics::OpenWindow();
 
     //Body* bigBall = new Body(CircleShape(100), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
-    Body* bigBall = new Body(CircleShape(100), 100, 100, 0.0);
-    Body* smallBall = new Body(CircleShape(50), 500, 100, 1.0);
-    bodies.push_back(bigBall);
-    bodies.push_back(smallBall);
+    Body* boxA = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
+    Body* boxB = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
+    boxA->rotation = 2.3;
+    bodies.push_back(boxA);
+    bodies.push_back(boxB);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,8 +33,6 @@ void Application::Input() {
                 running = false;
                 break;
             case SDL_MOUSEMOTION:
-                //mouseCursor.x = event.motion.x;
-                //mouseCursor.y = event.motion.y;
                 int x, y;
                 SDL_GetMouseState(&x, &y);
                 bodies[0]->position = Vec2(x, y);
@@ -41,25 +40,25 @@ void Application::Input() {
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                     running = false;
-                if (event.key.keysym.sym == SDLK_UP)
-                    pushForce.y = -50 * PIXELS_PER_METER;
-                if (event.key.keysym.sym == SDLK_DOWN)
-                    pushForce.y = 50 * PIXELS_PER_METER;
-                if (event.key.keysym.sym == SDLK_LEFT)
-                    pushForce.x = -50 * PIXELS_PER_METER;
-                if (event.key.keysym.sym == SDLK_RIGHT)
-                    pushForce.x = 50 * PIXELS_PER_METER;
+            //     if (event.key.keysym.sym == SDLK_UP)
+            //         pushForce.y = -50 * PIXELS_PER_METER;
+            //     if (event.key.keysym.sym == SDLK_DOWN)
+            //         pushForce.y = 50 * PIXELS_PER_METER;
+            //     if (event.key.keysym.sym == SDLK_LEFT)
+            //         pushForce.x = -50 * PIXELS_PER_METER;
+            //     if (event.key.keysym.sym == SDLK_RIGHT)
+            //         pushForce.x = 50 * PIXELS_PER_METER;
                 break;
-            case SDL_KEYUP:
-                if (event.key.keysym.sym == SDLK_UP)
-                    pushForce.y = 0;
-                if (event.key.keysym.sym == SDLK_DOWN)
-                    pushForce.y = 0;
-                if (event.key.keysym.sym == SDLK_LEFT)
-                    pushForce.x = 0;
-                if (event.key.keysym.sym == SDLK_RIGHT)
-                    pushForce.x = 0;
-                break;
+            // case SDL_KEYUP:
+            //     if (event.key.keysym.sym == SDLK_UP)
+            //         pushForce.y = 0;
+            //     if (event.key.keysym.sym == SDLK_DOWN)
+            //         pushForce.y = 0;
+            //     if (event.key.keysym.sym == SDLK_LEFT)
+            //         pushForce.x = 0;
+            //     if (event.key.keysym.sym == SDLK_RIGHT)
+            //         pushForce.x = 0;
+            //     break;
         }
     }
 }
@@ -82,13 +81,13 @@ void Application::Update() {
 
     // Apply forces to bodies
     for(auto body: bodies) {
-        //Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
-        //body->AddForce(weight);
+        // Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
+        // body->AddForce(weight);
         //Vec2 drag = Force::GenerateDragForce(*body, 0.01);
         //body->AddForce(drag);
         //Vec2 wind = Vec2(20.0 * PIXELS_PER_METER, 0.0);
         //body->AddForce(wind);
-        body->AddForce(pushForce);
+        // body->AddForce(pushForce);
         body->Update(deltaTime);
     }
 
@@ -103,9 +102,10 @@ void Application::Update() {
             Body* b = bodies[j];
             Contact contact;
             if (CollisionDetection::IsColliding(a, b, contact)) {
+                //contact.ResolveCollision();
                 Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFFFF00FF);
                 Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFFFF00FF);
-                Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * contact.depth, contact.start.y + contact.normal.y * contact.depth, 0xFFFF00FF);
+                Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15.0, contact.start.y + contact.normal.y * 15.0, 0xFFFF00FF);
                 a->isColliding = true;
                 b->isColliding = true;
             }
@@ -113,25 +113,25 @@ void Application::Update() {
     }
 
     // Keep body within bounds
-    for(auto body: bodies) {
-        if (body->shape->GetType() == CIRCLE) {
-            CircleShape* circleShape = (CircleShape*) body->shape;
-            if (body->position.x - circleShape->radius <= 0) {
-                body->position.x = circleShape->radius;
-                body->velocity.x *= -1.0;
-            } else if (body->position.x + circleShape->radius >= Graphics::Width()) {
-                body->position.x = Graphics::Width() - circleShape->radius;
-                body->velocity.x *= -1.0f;
-            }
-            if (body->position.y - circleShape->radius <= 0) {
-                body->position.y = circleShape->radius;
-                body->velocity.y *= -1.0f;
-            } else if (body->position.y + circleShape->radius + 24 >= Graphics::Height()) {
-                body->position.y = Graphics::Height() - circleShape->radius - 24;
-                body->velocity.y *= -0.6f;
-            }
-        }
-    }
+    // for(auto body: bodies) {
+    //     if (body->shape->GetType() == CIRCLE) {
+    //         CircleShape* circleShape = (CircleShape*) body->shape;
+    //         if (body->position.x - circleShape->radius <= 0) {
+    //             body->position.x = circleShape->radius;
+    //             body->velocity.x *= -1.0;
+    //         } else if (body->position.x + circleShape->radius >= Graphics::Width()) {
+    //             body->position.x = Graphics::Width() - circleShape->radius;
+    //             body->velocity.x *= -1.0f;
+    //         }
+    //         if (body->position.y - circleShape->radius <= 0) {
+    //             body->position.y = circleShape->radius;
+    //             body->velocity.y *= -1.0f;
+    //         } else if (body->position.y + circleShape->radius + 24 >= Graphics::Height()) {
+    //             body->position.y = Graphics::Height() - circleShape->radius - 24;
+    //             body->velocity.y *= -0.6f;
+    //         }
+    //     }
+    // }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -141,14 +141,13 @@ void Application::Render() {
 
     for (auto body: bodies) {
         Uint32 color = body->isColliding ? 0xFF0000FF : 0xFFFFFFFF;
-
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
             Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, color);
         }
         else if (body->shape->GetType() == BOX) {
             BoxShape* boxShape = (BoxShape*) body->shape;
-            Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, 0xFFFFFFFF);
+            Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, color);
         }
     }
     Graphics::RenderFrame();

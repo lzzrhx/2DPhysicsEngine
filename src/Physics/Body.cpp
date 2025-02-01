@@ -12,6 +12,7 @@ Body::Body(const Shape& shape, float x, float y, float mass) {
     this->angularAcceleration = 0.0;
     this->sumForces = Vec2(0, 0);
     this->sumTorque = 0.0;
+    this->restitution = 1.0;
     this->mass = mass;
     if (mass != 0.0) {
         this->invMass = 1.0 / mass;
@@ -35,6 +36,13 @@ Body::~Body() {
 bool Body::IsStatic() const {
     const float epsilon = 0.005;
     return fabs(invMass - 0.0) < epsilon;
+}
+
+void Body::ApplyImpulse(const Vec2& j) {
+    if (IsStatic()) {
+        return;
+    }
+    velocity += j * invMass;
 }
 
 void Body::AddForce(const Vec2& force) {

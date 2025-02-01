@@ -12,3 +12,15 @@ void Contact::ResolvePenetration() {
     b->position += normal * db;
 }
 
+void Contact::ResolveCollision() {
+    ResolvePenetration();
+    float e = std::min(a->restitution, b->restitution);
+    Vec2 vrel = a->velocity - b->velocity;
+    float vrelDotNormal = vrel.Dot(normal);
+    Vec2 impulseDirection = normal;
+    float impulseMagnitude = -(1 + e) * vrelDotNormal / (a->invMass + b->invMass);
+    Vec2 jn = impulseDirection * impulseMagnitude;
+    a->ApplyImpulse(jn);
+    b->ApplyImpulse(-jn);
+}
+
