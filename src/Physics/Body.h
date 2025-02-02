@@ -3,6 +3,8 @@
 
 #include "Vec2.h"
 #include "Shape.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 struct Body {
     bool isColliding = false;
@@ -36,9 +38,14 @@ struct Body {
     // Pointer to the shape/geometry of this rigid body
     Shape* shape = nullptr;
 
+    // Pointer to an SDL texture
+    SDL_Texture* texture = nullptr;
+
     // Constructor / destructor
     Body (const Shape& shape, float x, float y, float mass);
     ~Body();
+
+    void SetTexture(const char* textureFileName);
 
     bool IsStatic() const;
 

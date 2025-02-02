@@ -34,7 +34,7 @@
    [X] #19: Colliding Boxes
    [X] #20: Angular Collision Resolution
    [X] #21: Colliding Circles & Polygons
-   [-] #22: Rendering Textures
+   [X] #22: Rendering Textures
    [-] #23: The World Object
    [-] #24: Collision Instability
    [-] #25: Constraints

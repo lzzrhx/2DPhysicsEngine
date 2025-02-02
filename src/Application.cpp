@@ -18,8 +18,8 @@ void Application::Setup() {
     Body* leftWall = new Body(BoxShape(50, Graphics::Height() - 100), 50, Graphics::Height() / 2.0 - 25.0, 0.0);
     Body* rightWall = new Body(BoxShape(50, Graphics::Height() - 100), Graphics::Width() - 50, Graphics::Height() / 2.0 - 25.0, 0.0);
     floor->restitution = 0.5;
-    leftWall->restitution = 0.2;
-    rightWall->restitution = 0.2;
+    leftWall->restitution = 0.5;
+    rightWall->restitution = 0.5;
     floor->friction = 0.2;
     leftWall->friction = 0.2;
     rightWall->friction = 0.2;
@@ -28,9 +28,11 @@ void Application::Setup() {
     bodies.push_back(rightWall);
 
     Body* bigBox = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
+    bigBox->SetTexture("./assets/crate.png");
     //Body* bigBall = new Body(CircleShape(200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
     bigBox->rotation = 1.4;
-    bigBox->restitution = 0.7;
+    bigBox->restitution = 0.5;
+    bigBox->friction = 0.9;
     bodies.push_back(bigBox);
 
     //Body* ball = new Body(CircleShape(50), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
@@ -66,20 +68,26 @@ void Application::Input() {
                 // bodies[1]->position = Vec2(x, y);
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                int x;
-                int y;
-                SDL_GetMouseState(&x, &y);
-                //Body* ball;
-                //box = new Body(BoxShape(50, 50), x, y, 1.0);
-                //ball = new Body(CircleShape(50), x, y, 1.0);
-                //ball->restitution = 0.5;
-                //ball->friction = 0.4;
-                //bodies.push_back(ball);
-                Body* polygon;
-                polygon = new Body(PolygonShape(vertices), x, y, 2.0);
-                polygon->restitution = 0.2;
-                polygon->friction = 0.7;
-                bodies.push_back(polygon);
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    Body* body;
+                    body = new Body(CircleShape(30), x, y, 1.0);
+                    body->SetTexture("./assets/basketball.png");
+                    body->restitution = 0.9;
+                    body->friction = 0.2;
+                    bodies.push_back(body);
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    Body* body;
+                    body = new Body(BoxShape(60, 60), x, y, 1.0);
+                    body->SetTexture("./assets/crate.png");
+                    body->restitution = 0.2;
+                    body->friction = 0.7;
+                    bodies.push_back(body);
+                }
                 break;
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE)
@@ -151,15 +159,27 @@ void Application::Render() {
         Uint32 color = body->isColliding && debug ? 0xFF0000FF : 0xFFFFFFFF;
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
-            Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, color);
+            if (!debug && body->texture) {
+                Graphics::DrawTexture(body->position.x, body->position.y, circleShape->radius * 2.0, circleShape->radius * 2.0, body->rotation, body->texture);
+            } else {
+                Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, color);
+            }
         }
         else if (body->shape->GetType() == BOX) {
             BoxShape* boxShape = (BoxShape*) body->shape;
-            Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, color);
+            if (!debug && body->texture) {
+                Graphics::DrawTexture(body->position.x, body->position.y, boxShape->width, boxShape->height, body->rotation, body->texture);
+            } else {
+                Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, color);
+            }
         }
         else if (body->shape->GetType() == POLYGON) {
             PolygonShape* polygonShape = (PolygonShape*) body->shape;
-            Graphics::DrawPolygon(body->position.x, body->position.y, polygonShape->worldVertices, color);
+            if (!debug) {
+                Graphics::DrawFillPolygon(body->position.x, body->position.y, polygonShape->worldVertices, color);
+            } else {
+                Graphics::DrawPolygon(body->position.x, body->position.y, polygonShape->worldVertices, color);
+            }
         }
     }
     Graphics::RenderFrame();
