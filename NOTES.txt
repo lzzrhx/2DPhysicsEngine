@@ -33,7 +33,7 @@
    [X] #18: Impulse & Momentum
    [X] #19: Colliding Boxes
    [X] #20: Angular Collision Resolution
-   [-] #21: Colliding Circles & Polygons
+   [X] #21: Colliding Circles & Polygons
    [-] #22: Rendering Textures
    [-] #23: The World Object
    [-] #24: Collision Instability

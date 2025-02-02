@@ -26,8 +26,10 @@ float CircleShape::GetMomentOfInertia() const {
 
 PolygonShape::PolygonShape(const std::vector<Vec2> vertices) {
     std::cout << "PolygonShape constructor called!" << std::endl;
-    this->localVertices = vertices;
-    this->worldVertices = vertices;
+    for (auto vertex: vertices) {
+        localVertices.push_back(vertex);
+        worldVertices.push_back(vertex);
+    }
 }
 
 PolygonShape::~PolygonShape() {
@@ -43,7 +45,7 @@ Shape* PolygonShape::Clone() const {
 }
 
 float PolygonShape::GetMomentOfInertia() const {
-    return 0.0;
+    return 5000;
 }
 
 Vec2 PolygonShape::EdgeAt(int index) const { 

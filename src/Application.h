@@ -7,14 +7,10 @@
 
 class Application {
     private:
+        bool debug = false;
         bool running = false;
         int timePreviousFrame;
         std::vector<Body*> bodies;
-        Vec2 pushForce = Vec2(0, 0);
-        SDL_Rect liquid;
-
-        bool leftMouseButtonDown = false;
-        Vec2 mouseCursor = Vec2(0, 0);
 
     public:
         Application() = default;
