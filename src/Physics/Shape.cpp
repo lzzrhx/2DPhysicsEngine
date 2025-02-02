@@ -11,6 +11,9 @@ CircleShape::~CircleShape() {
     std::cout << "CircleShape destructor called!" << std::endl;
 }
 
+void CircleShape::UpdateVertices(float angle, const Vec2& position) {
+    return;
+}
 ShapeType CircleShape::GetType() const {
     return CIRCLE;
 }
