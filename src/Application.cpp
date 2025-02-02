@@ -1,8 +1,5 @@
 #include "Application.h"
 #include "./Physics/Constants.h"
-#include "./Physics/Force.h"
-#include "./Physics/CollisionDetection.h"
-#include "./Physics/Contact.h"
 
 bool Application::IsRunning() {
     return running;
@@ -13,59 +10,37 @@ bool Application::IsRunning() {
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Setup() {
     running = Graphics::OpenWindow();
+    world = new World(-9.8);
 
     Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() - 50.0, 0.0);
     Body* leftWall = new Body(BoxShape(50, Graphics::Height() - 100), 50, Graphics::Height() / 2.0 - 25.0, 0.0);
     Body* rightWall = new Body(BoxShape(50, Graphics::Height() - 100), Graphics::Width() - 50, Graphics::Height() / 2.0 - 25.0, 0.0);
+    Body* bigBox = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
     floor->restitution = 0.5;
     leftWall->restitution = 0.5;
     rightWall->restitution = 0.5;
     floor->friction = 0.2;
     leftWall->friction = 0.2;
     rightWall->friction = 0.2;
-    bodies.push_back(floor);
-    bodies.push_back(leftWall);
-    bodies.push_back(rightWall);
-
-    Body* bigBox = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
+    world->AddBody(floor);
+    world->AddBody(leftWall);
+    world->AddBody(rightWall);
     bigBox->SetTexture("./assets/crate.png");
-    //Body* bigBall = new Body(CircleShape(200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
     bigBox->rotation = 1.4;
     bigBox->restitution = 0.5;
     bigBox->friction = 0.9;
-    bodies.push_back(bigBox);
-
-    //Body* ball = new Body(CircleShape(50), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
-    //ball->restitution = 0.1;
-    //bodies.push_back(ball);
+    world->AddBody(bigBox);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Input processing
 ///////////////////////////////////////////////////////////////////////////////
-
-
 void Application::Input() {
-    std::vector<Vec2> vertices = { Vec2(0.5, -0.25) * PIXELS_PER_METER, Vec2(0, 0.5) * PIXELS_PER_METER, Vec2(-0.5, -0.25) * PIXELS_PER_METER };
-    // vertices = {
-    //     Vec2(20, 50),
-    //     Vec2(-40, 20),
-    //     Vec2(-20, -60),
-    //     Vec2(20, -60),
-    //     Vec2(40, 20)
-    // };
-
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
                 running = false;
-                break;
-            case SDL_MOUSEMOTION:
-                // int x;
-                // int y;
-                // SDL_GetMouseState(&x, &y);
-                // bodies[1]->position = Vec2(x, y);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
@@ -76,7 +51,7 @@ void Application::Input() {
                     body->SetTexture("./assets/basketball.png");
                     body->restitution = 0.9;
                     body->friction = 0.2;
-                    bodies.push_back(body);
+                    world->AddBody(body);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
                     int x, y;
@@ -86,7 +61,7 @@ void Application::Input() {
                     body->SetTexture("./assets/crate.png");
                     body->restitution = 0.2;
                     body->friction = 0.7;
-                    bodies.push_back(body);
+                    world->AddBody(body);
                 }
                 break;
             case SDL_KEYDOWN:
@@ -115,47 +90,14 @@ void Application::Update() {
     }
     timePreviousFrame = SDL_GetTicks();
 
-    // Apply forces to bodies
-    for(auto body: bodies) {
-        Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
-        body->AddForce(weight);
-        //Vec2 drag = Force::GenerateDragForce(*body, 0.01);
-        //body->AddForce(drag);
-        //Vec2 wind = Vec2(20.0 * PIXELS_PER_METER, 0.0);
-        //body->AddForce(wind);
-        // body->AddForce(pushForce);
-        body->Update(deltaTime);
-    }
-
-    for (auto& body: bodies) {
-        body->isColliding = false;
-    }
-
-    // Check all the bodies for collision
-    for (size_t i = 0; i < bodies.size() - 1; i++) {
-        for (size_t j = i + 1; j < bodies.size(); j++) {
-            Body* a = bodies[i];
-            Body* b = bodies[j];
-            Contact contact;
-            if (CollisionDetection::IsColliding(a, b, contact)) {
-                contact.ResolveCollision();
-                if (debug) {
-                    Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFFFF00FF);
-                    Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFFFF00FF);
-                    Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15.0, contact.start.y + contact.normal.y * 15.0, 0xFFFF00FF);
-                }
-                a->isColliding = true;
-                b->isColliding = true;
-            }
-        }
-    }
+    world->Update(deltaTime);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Render function (called several times per second to draw objects)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Render() {
-    for (auto body: bodies) {
+    for (auto body: world->GetBodies()) {
         Uint32 color = body->isColliding && debug ? 0xFF0000FF : 0xFFFFFFFF;
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
@@ -189,8 +131,6 @@ void Application::Render() {
 // Destroy function to delete objects and close the window
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Destroy() {
-    for (auto body: bodies) {
-        delete body;
-    }
+    delete world;
     Graphics::CloseWindow();
 }

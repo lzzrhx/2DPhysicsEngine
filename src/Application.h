@@ -3,6 +3,7 @@
 
 #include "./Graphics.h"
 #include "./Physics/Body.h"
+#include "./Physics/World.h"
 #include <vector>
 
 class Application {
@@ -10,7 +11,7 @@ class Application {
         bool debug = false;
         bool running = false;
         int timePreviousFrame;
-        std::vector<Body*> bodies;
+        World* world;
 
     public:
         Application() = default;
