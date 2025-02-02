@@ -30,6 +30,9 @@ struct Body {
     // Coefficient of restitution (elasticity)
     float restitution;
 
+    // Coefficient of friction
+    float friction;
+
     // Pointer to the shape/geometry of this rigid body
     Shape* shape = nullptr;
 
@@ -40,6 +43,7 @@ struct Body {
     bool IsStatic() const;
 
     void ApplyImpulse(const Vec2& j);
+    void ApplyImpulse(const Vec2& j, const Vec2& r);
 
     void AddForce(const Vec2& force);
     void AddTorque(float torque);

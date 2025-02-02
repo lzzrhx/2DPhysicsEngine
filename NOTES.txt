@@ -32,7 +32,7 @@
    [X] #17: Colliding Circles
    [X] #18: Impulse & Momentum
    [X] #19: Colliding Boxes
-   [-] #20: Angular Collision Resolution
+   [X] #20: Angular Collision Resolution
    [-] #21: Colliding Circles & Polygons
    [-] #22: Rendering Textures
    [-] #23: The World Object
@@ -69,7 +69,4 @@
        + Only works for convex polygons
        + There is at least one axis separating the two bodies
        + One of the most popular collision detection algorithms for rigid bodies (along with the GJK algorithm)
-
-
-
 
