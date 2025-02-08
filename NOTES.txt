@@ -37,8 +37,8 @@
    [X] #22: Rendering Textures
    [X] #23: The World Object
    [X] #24: Collision Instability
-   [-] #25: Constraints
-   [-] #26: Matrices
+   [X] #25: Constraints
+   [X] #26: Matrices
    [-] #27: Distance Constraint
    [-] #28: System of Contraints
    [-] #29: Penetration Constraint

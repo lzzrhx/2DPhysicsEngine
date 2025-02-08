@@ -47,9 +47,8 @@ void World::Update(float dt) {
         body->Update(dt);
         body->isColliding = false;
     }
-    for (int n = 0; n < 10; n++) {
-        CheckCollisions();
-    }
+    
+    CheckCollisions();
 }
 
 void World::CheckCollisions() {
