@@ -18,15 +18,20 @@ class Constraint {
         MatMN GetInvM() const;
         VecN GetVelocities() const;
         virtual void Solve() {}
+        virtual void PreSolve(const float dt) {}
+        virtual void PostSolve() {}
 };
 
 class JointConstraint: public Constraint {
     private:
         MatMN jacobian;
+        VecN cachedLambda;
+        float bias;
     public:
         JointConstraint();
         JointConstraint(Body* a, Body* b, const Vec2& anchorPoint);
         void Solve() override;
+        void PreSolve(const float dt) override;
 };
 
 class PenetrationConstraint: public Constraint {

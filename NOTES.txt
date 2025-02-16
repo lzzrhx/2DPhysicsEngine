@@ -39,8 +39,8 @@
    [X] #24: Collision Instability
    [X] #25: Constraints
    [X] #26: Matrices
-   [-] #27: Distance Constraint
-   [-] #28: System of Contraints
+   [X] #27: Distance Constraint
+   [X] #28: System of Contraints
    [-] #29: Penetration Constraint
    [-] #30: Stack of Boxes
    [-] #31: Optimization Techniques
