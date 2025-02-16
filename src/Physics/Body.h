@@ -47,10 +47,14 @@ struct Body {
 
     void SetTexture(const char* textureFileName);
 
+    Vec2 LocalSpaceToWorldSpace(const Vec2& point) const;
+    Vec2 WorldSpaceToLocalSpace(const Vec2& point) const;
+
     bool IsStatic() const;
 
-    void ApplyImpulse(const Vec2& j);
-    void ApplyImpulse(const Vec2& j, const Vec2& r);
+    void ApplyImpulseLinear(const Vec2& j);
+    void ApplyImpulseAngular(const float j);
+    void ApplyImpulseAtPoint(const Vec2& j, const Vec2& r);
 
     void AddForce(const Vec2& force);
     void AddTorque(float torque);
@@ -60,7 +64,8 @@ struct Body {
     void IntegrateLinear(float dt);
     void IntegrateAngular(float dt);
 
-    void Update(float dt);
+    void IntegrateForces(float dt);
+    void IntegrateVelocities(float dt);
 };
 
 #endif

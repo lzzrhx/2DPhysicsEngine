@@ -12,24 +12,12 @@ void Application::Setup() {
     running = Graphics::OpenWindow();
     world = new World(-9.8);
 
-    Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() - 50.0, 0.0);
-    Body* leftWall = new Body(BoxShape(50, Graphics::Height() - 100), 50, Graphics::Height() / 2.0 - 25.0, 0.0);
-    Body* rightWall = new Body(BoxShape(50, Graphics::Height() - 100), Graphics::Width() - 50, Graphics::Height() / 2.0 - 25.0, 0.0);
-    Body* bigBox = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0);
-    floor->restitution = 0.5;
-    leftWall->restitution = 0.5;
-    rightWall->restitution = 0.5;
-    floor->friction = 0.2;
-    leftWall->friction = 0.2;
-    rightWall->friction = 0.2;
-    world->AddBody(floor);
-    world->AddBody(leftWall);
-    world->AddBody(rightWall);
-    bigBox->SetTexture("./assets/crate.png");
-    bigBox->rotation = 1.4;
-    bigBox->restitution = 0.5;
-    bigBox->friction = 0.9;
-    world->AddBody(bigBox);
+    Body* a = new Body(CircleShape(30), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 0.0f);
+    Body* b = new Body(CircleShape(20), a->position.x - 100, a->position.y, 1.0f);
+    world->AddBody(a);
+    world->AddBody(b);
+    JointConstraint* joint = new JointConstraint(a, b, a->position);
+    world->AddConstraint(joint);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

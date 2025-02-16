@@ -24,6 +24,14 @@ std::vector<Body*>& World::GetBodies() {
     return bodies;
 }
 
+void World::AddConstraint(Constraint* constraint) {
+    constraints.push_back(constraint);
+}
+
+std::vector<Constraint*>& World::GetConstraints() {
+    return constraints;
+}
+
 void World::AddForce(const Vec2& force) {
     forces.push_back(force);
 }
@@ -36,16 +44,25 @@ void World::Update(float dt) {
     for (auto body: bodies) {
         Vec2 weight = Vec2(0.0, body->mass * G * PIXELS_PER_METER);
         body->AddForce(weight);
-        for (auto force: forces) {
+        for (auto force: forces) 
             body->AddForce(force);
-        }
-        for (auto torque: torques) {
+        for (auto torque: torques) 
             body->AddTorque(torque);
-        }
         //Vec2 drag = Force::GenerateDragForce(*body, 0.01);
         // body->AddForce(pushForce);
-        body->Update(dt);
         body->isColliding = false;
+    }
+    
+    for (auto body: bodies) {
+        body->IntegrateForces(dt);
+    }
+
+    for (auto& constraint: constraints) {
+        constraint->Solve();
+    }
+
+    for (auto body: bodies) {
+        body->IntegrateVelocities(dt);
     }
     
     CheckCollisions();
