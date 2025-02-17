@@ -8,7 +8,7 @@
 
 class Application {
     private:
-        bool debug = false;
+        bool debug = true;
         bool running = false;
         int timePreviousFrame;
         World* world;

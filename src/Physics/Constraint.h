@@ -35,8 +35,17 @@ class JointConstraint: public Constraint {
 };
 
 class PenetrationConstraint: public Constraint {
-    MatMN jacobian;
-    //void Solve() override;
+    private:
+        MatMN jacobian;
+        VecN cachedLambda;
+        float bias;
+        Vec2 normal;     // Normal direction in A local space
+        float friction;  // Friction coefficient between the two bodies
+    public:
+        PenetrationConstraint();
+        PenetrationConstraint(Body* a, Body* b, const Vec2& aCollisionPoint, const Vec2& bCollisionPoint, const Vec2& normal);
+        void Solve() override;
+        void PreSolve(const float dt) override;
 };
 
 #endif

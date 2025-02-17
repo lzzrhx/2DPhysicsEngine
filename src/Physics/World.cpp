@@ -3,6 +3,7 @@
 #include "./Contact.h"
 #include "./CollisionDetection.h"
 #include <iostream>
+#include <vector>
 
 World::World(float gravity) {
     G = -gravity;
@@ -12,6 +13,9 @@ World::World(float gravity) {
 World::~World() {
     for (auto body: bodies) {
         delete body;
+    }
+    for (auto constraint: constraints) {
+        delete constraint;
     }
     std::cout << "World destructor called!" << std::endl;
 }
@@ -41,7 +45,9 @@ void World::AddTorque(float torque) {
 }
 
 void World::Update(float dt) {
-    for (auto body: bodies) {
+    std::vector<PenetrationConstraint> penetrations;
+
+    for (auto& body: bodies) {
         Vec2 weight = Vec2(0.0, body->mass * G * PIXELS_PER_METER);
         body->AddForce(weight);
         for (auto force: forces) 
@@ -50,45 +56,50 @@ void World::Update(float dt) {
             body->AddTorque(torque);
         //Vec2 drag = Force::GenerateDragForce(*body, 0.01);
         // body->AddForce(pushForce);
-        body->isColliding = false;
     }
     
-    for (auto body: bodies) {
+    for (auto& body: bodies) {
         body->IntegrateForces(dt);
     }
-
-    for (auto& constraint: constraints) {
-        constraint->PreSolve(dt);
-    }
-
-    for (int i = 0; i < 5; i++) {
-        for (auto& constraint: constraints) {
-            constraint->Solve();
-        }
-    }
     
-    for (auto& constraint: constraints) {
-        constraint->PostSolve();
-    }
-
-    for (auto body: bodies) {
-        body->IntegrateVelocities(dt);
-    }
-    
-    CheckCollisions();
-}
-
-void World::CheckCollisions() {
     for (size_t i = 0; i < bodies.size() - 1; i++) {
         for (size_t j = i + 1; j < bodies.size(); j++) {
             Body* a = bodies[i];
             Body* b = bodies[j];
             Contact contact;
             if (CollisionDetection::IsColliding(a, b, contact)) {
-                contact.ResolveCollision();
-                a->isColliding = true;
-                b->isColliding = true;
+                PenetrationConstraint penetration(contact.a, contact.b, contact.start, contact.end, contact.normal);
+                penetrations.push_back(penetration);
             }
         }
+    }
+
+    for (auto& constraint: constraints) {
+        constraint->PreSolve(dt);
+    }
+    
+    for (auto& penetration: penetrations) {
+        penetration.PreSolve(dt);
+    }
+
+    for (int i = 0; i < 5; i++) {
+        for (auto& constraint: constraints) {
+            constraint->Solve();
+        }
+        for (auto& penetration: penetrations) {
+            penetration.Solve();
+        }
+    }
+    
+    for (auto& constraint: constraints) {
+        constraint->PostSolve();
+    }
+    
+    for (auto& penetration: penetrations) {
+        penetration.PostSolve();
+    }
+
+    for (auto& body: bodies) {
+        body->IntegrateVelocities(dt);
     }
 }

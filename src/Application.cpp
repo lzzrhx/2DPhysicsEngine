@@ -15,36 +15,47 @@ void Application::Setup() {
     world = new World(-9.8);
 
     // Add ragdoll parts (rigid bodies)
-    Body* bob = new Body(CircleShape(5), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 200, 0.0);
-    Body* head = new Body(CircleShape(25), bob->position.x, bob->position.y + 70, 5.0);
-    Body* torso = new Body(BoxShape(50, 100), head->position.x, head->position.y + 80, 3.0);
-    Body* leftArm = new Body(BoxShape(15, 70), torso->position.x - 32, torso->position.y - 10, 1.0);
-    Body* rightArm = new Body(BoxShape(15, 70), torso->position.x + 32, torso->position.y - 10, 1.0);
-    Body* leftLeg = new Body(BoxShape(20, 90), torso->position.x - 20, torso->position.y + 97, 1.0);
-    Body* rightLeg = new Body(BoxShape(20, 90), torso->position.x + 20, torso->position.y + 97, 1.0);
-    world->AddBody(bob);
-    world->AddBody(head);
-    world->AddBody(torso);
-    world->AddBody(leftArm);
-    world->AddBody(rightArm);
-    world->AddBody(leftLeg);
-    world->AddBody(rightLeg);
+    // Body* bob = new Body(CircleShape(5), Graphics::Width() / 2.0, Graphics::Height() / 2.0 - 200, 0.0);
+    // Body* head = new Body(CircleShape(25), bob->position.x, bob->position.y + 70, 5.0);
+    // Body* torso = new Body(BoxShape(50, 100), head->position.x, head->position.y + 80, 3.0);
+    // Body* leftArm = new Body(BoxShape(15, 70), torso->position.x - 32, torso->position.y - 10, 1.0);
+    // Body* rightArm = new Body(BoxShape(15, 70), torso->position.x + 32, torso->position.y - 10, 1.0);
+    // Body* leftLeg = new Body(BoxShape(20, 90), torso->position.x - 20, torso->position.y + 97, 1.0);
+    // Body* rightLeg = new Body(BoxShape(20, 90), torso->position.x + 20, torso->position.y + 97, 1.0);
+    // world->AddBody(bob);
+    // world->AddBody(head);
+    // world->AddBody(torso);
+    // world->AddBody(leftArm);
+    // world->AddBody(rightArm);
+    // world->AddBody(leftLeg);
+    // world->AddBody(rightLeg);
     
     // Add joints between ragdoll parts (distance constraints with one anchor point)
-    JointConstraint* string = new JointConstraint(bob, head, bob->position);
-    JointConstraint* neck = new JointConstraint(head, torso, head->position + Vec2(0, 25));
-    JointConstraint* leftShoulder = new JointConstraint(torso, leftArm, torso->position + Vec2(-28, -45));
-    JointConstraint* rightShoulder = new JointConstraint(torso, rightArm, torso->position + Vec2(+28, -45));
-    JointConstraint* leftHip = new JointConstraint(torso, leftLeg, torso->position + Vec2(-20, +50));
-    JointConstraint* rightHip = new JointConstraint(torso, rightLeg, torso->position + Vec2(+20, +50));
-    world->AddConstraint(string);
-    world->AddConstraint(neck);
-    world->AddConstraint(leftShoulder);
-    world->AddConstraint(rightShoulder);
-    world->AddConstraint(leftHip);
-    world->AddConstraint(rightHip);
+    // JointConstraint* string = new JointConstraint(bob, head, bob->position);
+    // JointConstraint* neck = new JointConstraint(head, torso, head->position + Vec2(0, 25));
+    // JointConstraint* leftShoulder = new JointConstraint(torso, leftArm, torso->position + Vec2(-28, -45));
+    // JointConstraint* rightShoulder = new JointConstraint(torso, rightArm, torso->position + Vec2(+28, -45));
+    // JointConstraint* leftHip = new JointConstraint(torso, leftLeg, torso->position + Vec2(-20, +50));
+    // JointConstraint* rightHip = new JointConstraint(torso, rightLeg, torso->position + Vec2(+20, +50));
+    // world->AddConstraint(string);
+    // world->AddConstraint(neck);
+    // world->AddConstraint(leftShoulder);
+    // world->AddConstraint(rightShoulder);
+    // world->AddConstraint(leftHip);
+    // world->AddConstraint(rightHip);
 
-    // Add a floor and walls to contain objects objects
+    Body* ball1 = new Body(CircleShape(200), (Graphics::Width() / 2.0) * 1.0, (Graphics::Height() / 2.0) * 1.0, 0.0);
+    ball1->restitution = 0.7;
+    world->AddBody(ball1);
+
+    Body* box1 = new Body(BoxShape(50, 1000), (Graphics::Width() / 3.0) * 1.0, (Graphics::Height() / 4.0) * 2.0, 0.0);
+    box1->restitution = 0.7;
+    world->AddBody(box1);
+    
+    Body* box2 = new Body(BoxShape(50, 1000), (Graphics::Width() / 3.0) * 2.0, (Graphics::Height() / 4.0) * 2.0, 0.0);
+    box2->restitution = 0.7;
+    world->AddBody(box2);
+
     Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0, Graphics::Height() - 50, 0.0);
     Body* leftWall = new Body(BoxShape(50, Graphics::Height() - 100), 50, Graphics::Height() / 2.0 - 25, 0.0);
     Body* rightWall = new Body(BoxShape(50, Graphics::Height() - 100), Graphics::Width() - 50, Graphics::Height() / 2.0 - 25, 0.0);
@@ -71,8 +82,8 @@ void Application::Input() {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
                     Body* body;
-                    body = new Body(CircleShape(30), x, y, 1.0);
-                    body->SetTexture("./assets/basketball.png");
+                    body = new Body(CircleShape(50), x, y, 1.0);
+                    // body->SetTexture("./assets/basketball.png");
                     body->restitution = 0.9;
                     body->friction = 0.2;
                     world->AddBody(body);
@@ -81,8 +92,8 @@ void Application::Input() {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
                     Body* body;
-                    body = new Body(BoxShape(60, 60), x, y, 1.0);
-                    body->SetTexture("./assets/crate.png");
+                    body = new Body(BoxShape(100, 100), x, y, 1.0);
+                    // body->SetTexture("./assets/crate.png");
                     body->restitution = 0.2;
                     body->friction = 0.7;
                     world->AddBody(body);
@@ -122,20 +133,20 @@ void Application::Update() {
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Render() {
 
-    Body* bob = world->GetBodies()[0];
-    Body* head = world->GetBodies()[1];
-    Graphics::DrawLine(bob->position.x, bob->position.y, head->position.x, head->position.y, 0xFF555555);
+    // Body* bob = world->GetBodies()[0];
+    // Body* head = world->GetBodies()[1];
+    // Graphics::DrawLine(bob->position.x, bob->position.y, head->position.x, head->position.y, 0xFF555555);
 
     // Draw all joints anchor points
-    for (auto joint: world->GetConstraints()) {
-        if (debug) {
-            const Vec2 anchorPoint = joint->a->LocalSpaceToWorldSpace(joint->aPoint);
-            Graphics::DrawFillCircle(anchorPoint.x, anchorPoint.y, 3, 0xFF0000FF);
-        }
-    }
+    // for (auto joint: world->GetConstraints()) {
+    //     if (debug) {
+    //         const Vec2 anchorPoint = joint->a->LocalSpaceToWorldSpace(joint->aPoint);
+    //         Graphics::DrawFillCircle(anchorPoint.x, anchorPoint.y, 3, 0xFF0000FF);
+    //     }
+    // }
 
     for (auto body: world->GetBodies()) {
-        Uint32 color = body->isColliding && debug ? 0xFF0000FF : 0xFFFFFFFF;
+        Uint32 color = 0xFFFFFFFF;
         if (body->shape->GetType() == CIRCLE) {
             CircleShape* circleShape = (CircleShape*) body->shape;
             if (!debug && body->texture) {
