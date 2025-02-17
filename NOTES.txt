@@ -43,7 +43,7 @@
    [X] #28: System of Contraints
    [X] #29: Penetration Constraint
    [X] #30: Stack of Boxes
-   [-] #31: Optimization Techniques
+   [X] #31: Optimization Techniques
    [-] #32: Bonus Lecture: Verlet Method
    [-] #33: Conclusion
 
@@ -75,4 +75,18 @@
      + Gregody Hodges, Game Physics in One Weekend                   https://github.com/gamephysicsweekend/VulkanRenderer
      + Nilson Souto, Constrained Rigid-Body Simulation               https://www.toptal.com/game/video-game-physics-part-iii-constrained-rigid-body-simulation
      + Physically Based Modelling: Constrained Dynamics              http://www.cs.cmu.edu/~baraff/sigcourse/notesf.pdf
+   - Optimizations / things to improve on the final implementation:
+     + Contact caching (improved varm starting)
+       + Sometimes called "manifold caching" - manifold->set of contacts
+       + A new data structure called a Manifold, that keeps track of the contacts between two bodies. These contacts and their penetration constraints persist across the simulation.
+       + With the stored contacts we can take advantage of varm starting
+       + Before adding a new contact, check if it is "too close" to a previous contact, and do not update the manifold if it is too close.
+       + Something similar in box2d: the Arbiter class
+     + Continous Collision Detection
+       + When two bodies move at high speed and "go through" eachother between updates
+       + Use of tunneling to fix, check if two bodies will collide and return the time of impact
+       + Lua example: https://github.com/hexian000/balls
+     + Broad and narrow phase
+       + Broad phase uses bounding-circle -> bounding-circle check
+       + Narrow phase does a detailed check on results from broad phase
 

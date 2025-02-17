@@ -62,7 +62,10 @@ void World::Update(float dt) {
     for (auto& body: bodies) {
         body->IntegrateForces(dt);
     }
-    
+   
+    // TODO: Broad-phase collision check
+    // TODO: Narrow-phase collision check
+
     for (size_t i = 0; i < bodies.size() - 1; i++) {
         for (size_t j = i + 1; j < bodies.size(); j++) {
             Body* a = bodies[i];

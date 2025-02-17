@@ -36,6 +36,8 @@ struct PolygonShape: public Shape {
     virtual ~PolygonShape();
     ShapeType GetType() const override;
     Shape* Clone() const override;
+    float PolygonArea() const;
+    Vec2 PolygonCentroid() const;
     float GetMomentOfInertia() const override;
     void UpdateVertices(float angle, const Vec2& position) override;
     Vec2 EdgeAt(int index) const;
