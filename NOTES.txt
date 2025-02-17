@@ -44,8 +44,8 @@
    [X] #29: Penetration Constraint
    [X] #30: Stack of Boxes
    [X] #31: Optimization Techniques
-   [-] #32: Bonus Lecture: Verlet Method
-   [-] #33: Conclusion
+   [X] #32: Bonus Lecture: Verlet Method
+   [X] #33: Conclusion
 
    [X] COMPLETED / [-] NOT COMPLETED
 
@@ -89,4 +89,42 @@
      + Broad and narrow phase
        + Broad phase uses bounding-circle -> bounding-circle check
        + Narrow phase does a detailed check on results from broad phase
+   - Numerical Methods (Numerical Integration)
+     + Euler method
+       + Find slope, use it to predict next point
+       + Very fast method!
+       + Explicit Euler Integration Method
+         + The system will gain enery over time
+         + Example:
+           + Update acceleration (a=Fm)
+           + Integrate velocity to find new position (x+=v*dt)
+           + Integrate acceleration to find new velocity (v+=a*dt)
+       + Semi-Implicit Euler Integration Method
+         + Using the velocity for the next timestep in the current update
+         + More accurate than the Explicit Method
+         + The system will slowly loose energy over time
+         + Example
+           + Update acceleration (a=Fm)
+           + Integrate acceleration to find new velocity (v+=a*dt)
+           + Integrate velocity to find new position (x+=v*dt)
+     + Mid-Point Method
+       + More accurate, but more expensive than Euler
+       + Sample the slope in the midpoint between the current point in time and += deltatime
+       + Use the sampled slope from the midpoint in the current point to predict the point at += deltatime
+     + Runge-Kutta (order 4) Method (RK4)
+       + Very accurate, but very expensive
+       + Similar to the Mid-Point method, but sampling the slope from 4 points between the current time and current time + deltatime
+       + The sampled slopes have a weighted value
+     + Verlet Method
+       + Numerical stability!
+       + Super fast!
+       + Very good when there are multiple objects connected/contrained with eachother
+       + First used in 1781 by Jean Delambre, but rediscovered many times, most recently by Loup Verlet in the 1960s
+       + Used by P.H Cowell and A.C. Crommelin in 1909 to compute the orbit of Halley's Comet
+       + Good numerical stability and time reversibility
+       + How it works: Stores current position and previous position (Instead of storing position and velocity)
+   - Next steps
+     + David M Bourg, Physics for Game Developers
+     + Davod H Eberly, Game Physics
+     + 3D Math Primer for Graphics and Game Development
 
