@@ -39,7 +39,9 @@ struct PolygonShape: public Shape {
     float GetMomentOfInertia() const override;
     void UpdateVertices(float angle, const Vec2& position) override;
     Vec2 EdgeAt(int index) const;
-    float FindMinSeparation(const PolygonShape* other, Vec2& axis, Vec2& point) const;
+    float FindMinSeparation(const PolygonShape* other, int& indexReferenceEdge, Vec2& supportPoint) const;
+    int FindIncidentEdge(const Vec2& normal) const;
+    int ClipSegmentToLine(const std::vector<Vec2>& contactsIn, std::vector<Vec2>& contactsOut, const Vec2& c0, const Vec2& c1) const;
 };
 
 struct BoxShape: public PolygonShape {

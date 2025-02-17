@@ -1,4 +1,5 @@
 #include "./World.h"
+#include "../Graphics.h"
 #include "./Constants.h"
 #include "./Contact.h"
 #include "./CollisionDetection.h"
@@ -66,10 +67,14 @@ void World::Update(float dt) {
         for (size_t j = i + 1; j < bodies.size(); j++) {
             Body* a = bodies[i];
             Body* b = bodies[j];
-            Contact contact;
-            if (CollisionDetection::IsColliding(a, b, contact)) {
-                PenetrationConstraint penetration(contact.a, contact.b, contact.start, contact.end, contact.normal);
-                penetrations.push_back(penetration);
+            std::vector<Contact> contacts;
+            if (CollisionDetection::IsColliding(a, b, contacts)) {
+                for (auto contact: contacts) {
+                    Graphics::DrawCircle(contact.start.x, contact.start.y, 5, 0.0, 0xFF00FFFF);
+                    Graphics::DrawCircle(contact.end.x, contact.end.y, 2, 0.0, 0xFF00FFFF);
+                    PenetrationConstraint penetration(contact.a, contact.b, contact.start, contact.end, contact.normal);
+                    penetrations.push_back(penetration);
+                }
             }
         }
     }
@@ -82,7 +87,7 @@ void World::Update(float dt) {
         penetration.PreSolve(dt);
     }
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < NUM_CONSTRAINT_ITERATIONS; i++) {
         for (auto& constraint: constraints) {
             constraint->Solve();
         }

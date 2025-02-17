@@ -1,29 +1,29 @@
 #include "CollisionDetection.h"
 #include <limits>
+#include <vector>
 
-bool CollisionDetection::IsColliding(Body* a, Body* b, Contact& contact) {
+bool CollisionDetection::IsColliding(Body* a, Body* b, std::vector<Contact>& contacts) {
     bool aIsCircle = a->shape->GetType() == CIRCLE;
     bool bIsCircle = b->shape->GetType() == CIRCLE;
     bool aIsPolygon = a->shape->GetType() == POLYGON || a->shape->GetType() == BOX;
     bool bIsPolygon = b->shape->GetType() == POLYGON || b->shape->GetType() == BOX;
 
     if (aIsCircle && bIsCircle) {
-        return IsCollidingCircleCircle(a, b, contact);
+        return IsCollidingCircleCircle(a, b, contacts);
     }
     if (aIsPolygon && bIsPolygon) {
-        return IsCollidingPolygonPolygon(a, b, contact);
+        return IsCollidingPolygonPolygon(a, b, contacts);
     }
     if (aIsPolygon && bIsCircle) {
-        return IsCollidingPolygonCircle(a, b, contact);
+        return IsCollidingPolygonCircle(a, b, contacts);
     }
     if (aIsCircle && bIsPolygon) {
-        return IsCollidingPolygonCircle(b, a, contact);
+        return IsCollidingPolygonCircle(b, a, contacts);
     }
-
     return false;
 }
 
-bool CollisionDetection::IsCollidingCircleCircle(Body* a, Body* b, Contact& contact) {
+bool CollisionDetection::IsCollidingCircleCircle(Body* a, Body* b, std::vector<Contact>& contacts) {
     CircleShape* aCircleShape = (CircleShape*) a->shape;
     CircleShape* bCircleShape = (CircleShape*) b->shape;
 
@@ -34,6 +34,7 @@ bool CollisionDetection::IsCollidingCircleCircle(Body* a, Body* b, Contact& cont
     if (!isColliding) {
         return false;
     }
+    Contact contact;
 
     contact.a = a;
     contact.b = b;
@@ -42,42 +43,81 @@ bool CollisionDetection::IsCollidingCircleCircle(Body* a, Body* b, Contact& cont
     contact.start = b->position - contact.normal * bCircleShape->radius;
     contact.end = a->position + contact.normal * aCircleShape->radius;
     contact.depth = (contact.end - contact.start).Magnitude();
+    contacts.push_back(contact);
     return true;
 }
 
-bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, Contact& contact) {
-    const PolygonShape* aPolygonShape = (PolygonShape*) a->shape;
-    const PolygonShape* bPolygonShape = (PolygonShape*) b->shape;
-    Vec2 aAxis, bAxis;
-    Vec2 aPoint, bPoint;
-    float abSeparation = aPolygonShape->FindMinSeparation(bPolygonShape, aAxis, aPoint);
+bool CollisionDetection::IsCollidingPolygonPolygon(Body* a, Body* b, std::vector<Contact>& contacts) {
+    PolygonShape* aPolygonShape = (PolygonShape*) a->shape;
+    PolygonShape* bPolygonShape = (PolygonShape*) b->shape;
+    int aIndexReferenceEdge, bIndexReferenceEdge;
+    Vec2 aSupportPoint, bSupportPoint;
+    float abSeparation = aPolygonShape->FindMinSeparation(bPolygonShape, aIndexReferenceEdge, aSupportPoint);
     if (abSeparation >= 0) {
             return false;
     } 
-    float baSeparation = bPolygonShape->FindMinSeparation(aPolygonShape, bAxis, bPoint);
+    float baSeparation = bPolygonShape->FindMinSeparation(aPolygonShape, bIndexReferenceEdge, bSupportPoint);
     if (baSeparation >= 0) {
             return false;
     }
 
-    contact.a = a;
-    contact.b = b;
+    PolygonShape* referenceShape;
+    PolygonShape* incidentShape;
+    int indexReferenceEdge;
     if (abSeparation > baSeparation) {
-        contact.depth = -abSeparation;
-        contact.normal = aAxis.Normal();
-        contact.start = aPoint;
-        contact.end = aPoint + contact.normal * contact.depth;
-    }
-    else {
-        contact.depth = -baSeparation;
-        contact.normal = -bAxis.Normal();
-        contact.start = bPoint - contact.normal * contact.depth;
-        contact.end = bPoint;
+        referenceShape = aPolygonShape;
+        incidentShape = bPolygonShape;
+        indexReferenceEdge = aIndexReferenceEdge;
+    } else {
+        referenceShape = bPolygonShape;
+        incidentShape = aPolygonShape;
+        indexReferenceEdge = bIndexReferenceEdge;
     }
 
+    // Find the reference edge
+    Vec2 referenceEdge = referenceShape->EdgeAt(indexReferenceEdge);
+
+    // Find the incident edge
+    int incidentIndex = incidentShape->FindIncidentEdge(referenceEdge.Normal());
+    int incidentNextIndex = (incidentIndex + 1) % incidentShape->worldVertices.size();
+    Vec2 v0 = incidentShape->worldVertices[incidentIndex];
+    Vec2 v1 = incidentShape->worldVertices[incidentNextIndex];
+
+    std::vector<Vec2> contactPoints = {v0, v1};
+    std::vector<Vec2> clippedPoints = contactPoints;
+    for (size_t i = 0; i < referenceShape->worldVertices.size(); i++) {
+        if (static_cast<int>(i) == indexReferenceEdge)
+            continue;
+        Vec2 c0 = referenceShape->worldVertices[i];
+        Vec2 c1 = referenceShape->worldVertices[(i + 1) % referenceShape->worldVertices.size()];
+        int numClipped = referenceShape->ClipSegmentToLine(contactPoints, clippedPoints, c0, c1);
+        if (numClipped < 2) {
+            break;
+        }
+        contactPoints = clippedPoints;
+    }
+
+    auto vref = referenceShape->worldVertices[indexReferenceEdge];
+    for (auto& vclip: clippedPoints) {
+        float separation = (vclip - vref).Dot(referenceEdge.Normal());
+        if (separation <= 0) {
+            Contact contact;
+            contact.a = a;
+            contact.b = b;
+            contact.normal = referenceEdge.Normal();
+            contact.start = vclip;
+            contact.end = vclip + contact.normal * -separation;
+            if (baSeparation >= abSeparation) {
+                std::swap(contact.start, contact.end);
+                contact.normal *= -1.0;
+            }
+            contacts.push_back(contact);
+        }
+    }
     return true;
 }
 
-bool CollisionDetection::IsCollidingPolygonCircle(Body* polygon, Body* circle, Contact& contact) {
+bool CollisionDetection::IsCollidingPolygonCircle(Body* polygon, Body* circle, std::vector<Contact>& contacts) {
     const PolygonShape* polygonShape = (PolygonShape*) polygon->shape;
     const CircleShape* circleShape = (CircleShape*) circle->shape;
     const std::vector<Vec2>& polygonVertices = polygonShape->worldVertices;
@@ -107,6 +147,7 @@ bool CollisionDetection::IsCollidingPolygonCircle(Body* polygon, Body* circle, C
         }
     }
 
+    Contact contact;
     if (isOutside) {
         Vec2 v1 = circle->position - minCurrVertex;
         Vec2 v2 = minNextVertex - minCurrVertex;
@@ -156,6 +197,6 @@ bool CollisionDetection::IsCollidingPolygonCircle(Body* polygon, Body* circle, C
         contact.start = circle->position - (contact.normal * circleShape->radius);
         contact.end = contact.start + (contact.normal * contact.depth);
     }
-    
+    contacts.push_back(contact);
     return true;
 }

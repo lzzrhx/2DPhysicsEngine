@@ -42,7 +42,7 @@
    [X] #27: Distance Constraint
    [X] #28: System of Contraints
    [X] #29: Penetration Constraint
-   [-] #30: Stack of Boxes
+   [X] #30: Stack of Boxes
    [-] #31: Optimization Techniques
    [-] #32: Bonus Lecture: Verlet Method
    [-] #33: Conclusion
@@ -70,8 +70,9 @@
        + There is at least one axis separating the two bodies
        + One of the most popular collision detection algorithms for rigid bodies (along with the GJK algorithm)
    - Links:
-     + Erin Catto, box2d-lite                            https://github.com/erincatto/box2d-lite
-     + Gregody Hodges, Game Physics in One Weekend       https://github.com/gamephysicsweekend/VulkanRenderer
-     + Nilson Souto, Constrained Rigid-Body Simulation   https://www.toptal.com/game/video-game-physics-part-iii-constrained-rigid-body-simulation
-     + Physically Based Modelling: Constrained Dynamics  http://www.cs.cmu.edu/~baraff/sigcourse/notesf.pdf
+     + Erin Catto, Fast and Simple Physics using Sequential Impulses https://box2d.org/files/ErinCatto_SequentialImpulses_GDC2006.pdf
+     + Erin Catto, box2d-lite                                        https://github.com/erincatto/box2d-lite
+     + Gregody Hodges, Game Physics in One Weekend                   https://github.com/gamephysicsweekend/VulkanRenderer
+     + Nilson Souto, Constrained Rigid-Body Simulation               https://www.toptal.com/game/video-game-physics-part-iii-constrained-rigid-body-simulation
+     + Physically Based Modelling: Constrained Dynamics              http://www.cs.cmu.edu/~baraff/sigcourse/notesf.pdf
 

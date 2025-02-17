@@ -13,7 +13,7 @@ Body::Body(const Shape& shape, float x, float y, float mass) {
     this->angularAcceleration = 0.0;
     this->sumForces = Vec2(0, 0);
     this->sumTorque = 0.0;
-    this->restitution = 1.0;
+    this->restitution = 0.6;
     this->friction = 0.7;
     this->mass = mass;
     if (mass != 0.0) {
@@ -46,7 +46,7 @@ void Body::SetTexture(const char* textureFileName) {
 }
 
 bool Body::IsStatic() const {
-    const float epsilon = 0.005;
+    const float epsilon = 0.005f;
     return fabs(invMass - 0.0) < epsilon;
 }
 
